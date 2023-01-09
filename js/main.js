@@ -1,145 +1,115 @@
+// 돋보기를 선택해도 search되도록 지정
+const searchEl = document.querySelector('.search');
+const searchInputEl = searchEl.querySelector('input')
 
-const badgeEl = document.querySelector('header .badges');
-const toTopEl = document.querySelector('#to-top');
-
-window.addEventListener('scroll', _.throttle(function(){
-  console.log(window.scrollY)
-  if(window.scrollY > 500){
-    //badge hidden
-    // badgeEl.style.display='none'
-    // gasp.to(요소, 지속시간, 옵션-css 속성도 넣을수 있음) 에니메니션 만들때 많이 사용함.
-    gsap.to(badgeEl, .6, {
-      opacity : 0,
-      display : 'none'
-    }) 
-    //하단 버튼 보이기!
-    gsap.to(toTopEl, .2, {
-      x:0
-    })
-   } else{  
-      gsap.to(badgeEl, .6, {
-        opacity : 1,
-        display : 'block'
-      })         
-      //badge view
-    // badgeEl.style.display='block'
-    //하단 버튼 숨기기
-    gsap.to(toTopEl, .2, {
-      x:100
-    })
-  }
-},300));
-//_.throttle(함수,시간)
-
-//window 화면자체임
-toTopEl.addEventListener('click',function(){
-  gsap.to(window, .7, {
-    scrollTo: 0
-  })
-})
-
-
-
-const fadeEls = document.querySelectorAll('.visual .fade-in')
-fadeEls.forEach(function(fadeEl, index){
-  gsap.to(fadeEl, 1, {
-    delay:(index+1) *.7, //0.7, 1.4, 2.1, 2.7 
-    opacity :1
-  });
+searchEl.addEventListener('click',function(){
+  searchInputEl.focus();
 });
 
+searchInputEl.addEventListener('focus',function(){
+  searchEl.classList.add('focused');
+  searchInputEl.setAttribute('placeholder','통합검색');
+});
+searchInputEl.addEventListener('blur',function(){
+  searchEl.classList.remove('focused');
+  searchInputEl.setAttribute('placeholder','');
+});
 
-//Swiper(선택자를 인수로 삽입,옵션)
+// 메인이미지 순차적으로 출력
+const fadeEls = document.querySelectorAll('.visual .fade-in');
+fadeEls.forEach(function(fadeEl, index){
+  // gsap.to(요소,지속시간,옵션)
+  gsap.to(fadeEl, 1 ,{
+    delay:( index +1 ) * .7, //  0.7, 1.4, 2.1, 2.7 몇초뒤에 실행
+    opacity:1
+  });
+});
+// new Swiper(선택자, 옵션)
 new Swiper('.notice-line .swiper-container', {
-  direction: 'vertical',
-  autoplay: true,
+  direction:'vertical',
+  autoplay:true,
   loop:true
 });
 
-new Swiper('.promotion .swiper-container',{
-  slidesPerView : 3, // 한번에 보여줄 슬라드 개수
-  spaceBetween : 10, // 슬라이드 사이 여백
-  centeredSlides: true, // 1번 슬라이드가 가운데 보이기
+const swiper = new Swiper('.promotion .swiper-container',{
+  slidesPerView : 3, //한번에 보여줄 슬라이드 개수
+  spaceBetween : 10, //슬라이드 사이 여백
+  centeredSlides : true, //1번 슬라이드가 가운데 보이기
   loop:true,
-  // autoplay:{
-  //   delay: 5000
-  // }
-  pagination :{
-    el:'.promotion .swiper-pagination', //페이지번호 요소 선택자
-    clickable:true  //사용자의 페이지 번호 요소 제어 가능 여부
+  autoplay:{
+    delay:5000    //기본 3초(3000)
   },
-  navigation: {
-    prevEl:'.promotion .swiper-prev',
-    nextEl:'.promotion .swiper-next'
-  }
-})
-
-new Swiper('.awards .swiper-container',{
-  //direction: 'horizontal' 기본값으로 지정안해도됨
-  autoplay:true,
-  loop:true,
-  spaceBetween:30, // 사이사이 여백
-  slidesPerView: 5, //하나의 슬라이드에 보여질 갯수지정
+  pagination:{
+    el:'.promotion .swiper-pagination', //페이지 번호 요소 선택자
+    clickable:true //사용자의 페이지 번호 요소 제어
+  },
   navigation:{
-    prevEl:'.awards .swiper-prev',
-    nextEl:'.awards .swiper-next'
+    prevEl:'.promotioin .swiper-prev',
+    nextEl:'.promotioin .swiper-next'
   }
-})
+  
+});
+
+// const stopEl = document.querySelector('.swiper-stop');
+// stopEl.addEventListener('click',function(){
+//   swiper.autoplay.stop();  
+// });
 
 
-
-
-
-
-
-const promotionEl = document.querySelector('.promotion')
-const promotionToggleBtn = document.querySelector('.toggle-promotion')
+const promotionEl = $('.promotion');
+const promotionToggleBtn = $('.toggle-promotion');
+const togglebtnEl =$('.toggle-btn');
 let isHidePromotion = false;
-promotionToggleBtn.addEventListener('click',function(){
-  isHidePromotion = !isHidePromotion //어떤변수의 값을 지속적으로 반대의 값으로 변환시켜줌
-  if (isHidePromotion){
-    //숨김처리
-    promotionEl.classList.add('hide')
+
+promotionToggleBtn.click(function(){
+  isHidePromotion = !isHidePromotion;
+  if(isHidePromotion){
+    promotionEl.addClass('show');
+    togglebtnEl.attr('src','./images/btn_prom_up.png');
   }else{
-    promotionEl.classList.remove
-    ('hide')
-    //보임처리
+    promotionEl.removeClass('show');
+    togglebtnEl.attr('src','./images/btn_prom_down.png');
   }
 })
 
-// 범위 랜덤 함수(소수점 2자리까지)
-function random(min, max) {
-  // `.toFixed()`를 통해 반환된 문자 데이터를,
-  // `parseFloat()`을 통해 소수점을 가지는 숫자 데이터로 변환
-  return parseFloat((Math.random() * (max - min) + min).toFixed(2))
-}
-
-function floatingObject(selector,delay, size){
-  // gsap.to(요소(선택자),시간,옵션)
-  gsap.to(
-    selector,  //선택자
-    random(1.5,2.5),  //애니메이션 동작 시간
-    { //옵션
-    y:size,
-    repeat: -1,
-    yoyo: true,
-    ease: "power1.easeInOut",
-    delay:random(0,delay)
-  })
-}
-
-floatingObject('.floating1',1,15)
-floatingObject('.floating2',5,15)
-floatingObject('.floating3',1.5,20)
-
-const spyEls = document.querySelectorAll('section.scroll-spy')
+const spyEls = document.querySelectorAll('section.scroll-spay');
 spyEls.forEach(function(spyEl){
-  //에니메이션 동작 가능
   new ScrollMagic
-      .Scene({                //특정한 요소를 감시하는 옵션을 지정(추가)
-        triggerElement:spyEl, //보여짐 여부를 감시할 요소를 지정
-        triggerHook: .8 //시작0,끝1 중간 0.5 뷰포트의 트리거(실행)개념 어떤지점에서 감시되는지 판단(갈고리) 
-      })
-      .setClassToggle(spyEl, 'show')  // 클래스속성을 추가,삭제등을 지정
-      .addTo(new ScrollMagic.Controller())     //컨트롤러 개념
-})
+    .Scene({
+      triggerElement:spyEl, //보여짐 여부를 감시할 요소를 지정
+      triggerHook: .8   //뷰포트 최상단:0, 최하단:1 .8이면 마지막지점임.
+    })
+    .setClassToggle(spyEl,'show')
+    .addTo(new ScrollMagic.Controller());
+});
+ //Scene은 ScrollMagic을 통해서 특정한 요소를 감시하는 옵션
+  //scrollMagic이라는 자바스크립트라이브러리가 필요한 컨트롤러라는 
+  //개념을 추가하기위해서addTo()메소드를 사용함
+  //화면에 보이는 정보들을 입력, 특정한 세션이 화면에 보이면 에니메이션 추가기능
+
+  const thisYear = document.querySelector('.this-year');
+  thisYear.textContent = new Date().getFullYear();
+
+  const toTopEl = document.querySelector('#to-top');
+
+  window.addEventListener('scroll',_.throttle(function(){
+    console.log(window.scrollY);
+    if(window.scrollY > 500){
+      // gsap.to(요소,지속시간,옵션);
+      gsap.to(toTopEl, .2 , {
+        x:0
+      });
+    }else{
+      // 버튼 숨기기
+      gsap.to(toTopEl, .2 , {
+        x:100
+      });     
+    }
+  },300));
+
+  
+  toTopEl.addEventListener('click',function(){
+    gsap.to(window,.7 , {
+      scrollTo:0
+    })
+  });
